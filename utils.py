@@ -5,11 +5,6 @@ from time import perf_counter
 
 BOARD_ID = "4"
 
-with open("token.txt") as f:
-    token_str = f.readlines()[0]
-    token = json.dumps({"botToken":token_str})
-
-
 api_base = "http://diamonds.etimo.se/api"
 header = {'Content-Type':'application/json', 'Accept':'application/json'}
 
@@ -90,7 +85,7 @@ def get_direction(xy_distance):
         return "NORTH"
 
 
-def join_board():
+def join_board(token):
 
     join_url = api_base + f"/boards/{BOARD_ID}/join"
     r = requests.post(url=join_url, data=token, headers=header)
@@ -106,7 +101,7 @@ def get_game_objects():
     return board_state['data']['gameObjects']
 
 
-def make_move(direction):
+def make_move(direction, token_str):
     """
     Move your piece in the specified direction.
     Assumes board has been joined previously.
@@ -162,7 +157,7 @@ def calculate_optimal_sleep():
     return optimal_delay
 
 
-def go_towards(location, delay, player_name):
+def go_towards(location, delay, player_name, token_str):
 
     player_location = get_player(player_name)['position']
     xy_distance = get_xy_distance(player_location, location)
@@ -170,8 +165,8 @@ def go_towards(location, delay, player_name):
     print(f"Distance: {xy_distance}")
     direction = get_direction(xy_distance)
 
-    print(f"Going in direction: {direction}")
-    make_move(direction)
+    print(f"Going: {direction}")
+    make_move(direction, token_str)
     sleep(delay)
 
 
