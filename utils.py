@@ -180,3 +180,10 @@ def get_player_base(name):
     base = player['properties']['base']
 
     return base
+
+
+def find_reset_button():
+
+    reset_button = extract_objects("DiamondButtonGameObject")[0]
+
+    return reset_button['position']
