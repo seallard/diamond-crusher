@@ -9,6 +9,22 @@ api_base = "http://diamonds.etimo.se/api"
 header = {'Content-Type':'application/json', 'Accept':'application/json'}
 
 
+def register_bot(email, bot_name):
+
+    register_url = "http://diamonds.etimo.se/api/bots"
+
+    bot_dict = {
+    "email": email,
+    "botName": bot_name
+    }
+
+    bot_data = json.dumps(bot_dict)
+    r = requests.post(url=register_url, data=bot_data, headers=header)
+    token = r.json()['data']['token']
+
+    return token
+
+
 def get_distance(location_a, location_b):
 
     delta_x = location_a['x'] - location_b['x']
