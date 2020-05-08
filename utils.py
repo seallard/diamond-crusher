@@ -30,22 +30,6 @@ def get_xy_distance(location_a, location_b):
     return (delta_x, delta_y)
 
 
-def get_distance(location_a, location_b):
-
-    delta_x = location_a['x'] - location_b['x']
-    delta_y = location_a['y'] - location_b['y']
-
-    return abs(delta_x) + abs(delta_y)
-
-
-def get_xy_distance(location_a, location_b):
-
-    delta_x = location_a['x'] - location_b['x']
-    delta_y = location_a['y'] - location_b['y']
-
-    return (delta_x, delta_y)
-
-
 def extract_object(object_type, game_objects):
 
     objects = []
