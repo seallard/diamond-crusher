@@ -25,21 +25,21 @@ def get_xy_distance(location_a, location_b):
     return (delta_x, delta_y)
 
 
-def extract_object(object_type, game_objects):
+def extract_objects(object_type):
 
-    objects = []
+    game_objects = get_game_objects()
+    extracted_objects = []
 
     for game_object in game_objects:
         if game_object['type'] == object_type:
-            objects.append(game_object)
+            extracted_objects.append(game_object)
 
-    return objects
+    return extracted_objects
 
 
 def get_player(player_name):
 
-    objects = get_game_objects()
-    bots = extract_object("BotGameObject", objects)
+    bots = extract_objects("BotGameObject")
 
     for bot in bots:
         if bot['properties']['name'] == player_name:
@@ -49,8 +49,7 @@ def get_player(player_name):
 
 def closest_diamond(player_name):
 
-    game_objects = get_game_objects()
-    diamonds = extract_object("DiamondGameObject", game_objects)
+    diamonds = extract_objects("DiamondGameObject")
     player_position = get_player(player_name)['position']
 
     shortest_distance = 100
