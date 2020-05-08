@@ -178,3 +178,11 @@ def go_towards(location, delay, player_name):
 def number_of_collected_diamonds(player_name):
 
     return get_player(player_name)['properties']['diamonds']
+
+
+def get_player_base(name):
+
+    player = get_player(name)
+    base = player['properties']['base']
+
+    return base

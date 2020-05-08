@@ -5,13 +5,12 @@ name = "seal"
 
 def main():
 
-    delay = calculate_optimal_sleep()
     join_board()
+    base = get_player_base(name)
+    delay = calculate_optimal_sleep()
 
     while True:
 
-        player = get_player(name)
-        base = player['properties']['base']
         collected_diamonds = 0
 
         while collected_diamonds < 4:
