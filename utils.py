@@ -132,44 +132,12 @@ def make_move(direction, token_str):
     return r.status_code
 
 
-def calculate_server_latency():
-    """
-    Ping API and measure latency in seconds.
-    Calculated as the average of 5 consecutive pings.
-    """
-
-    start_time = perf_counter()
-
-    for i in range(5):
-        requests.get(api_base)
-
-    stop_time = perf_counter()
-    average_latency = (stop_time - start_time)/5
-
-    return average_latency
-
-
 def get_minimum_delay():
 
     data = requests.get(api_base + "/boards").json()['data'][0]
     delay_in_msec = data['minimumDelayBetweenMoves']
 
     return delay_in_msec/1000
-
-
-def calculate_optimal_sleep():
-    """
-    Determine optimal sleep period between calls to the API.
-    """
-
-    average_latency = calculate_server_latency()
-    minimum_delay = get_minimum_delay()
-    optimal_delay = minimum_delay-(average_latency/2)
-
-    if optimal_delay < 0:
-        return 0
-
-    return optimal_delay
 
 
 def go_towards(location, delay, player_name, token_str):
@@ -183,6 +151,16 @@ def go_towards(location, delay, player_name, token_str):
     print(f"Going: {direction}")
     make_move(direction, token_str)
     sleep(delay)
+
+
+def go_to(position, delay, player_name, token_str):
+
+    player_position = get_player(player_name)['position']
+
+    while player_position != position:
+
+        go_towards(position, delay, player_name, token_str)
+        player_position = get_player(player_name)['position']
 
 
 def number_of_collected_diamonds(player_name):

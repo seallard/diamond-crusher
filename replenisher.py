@@ -11,13 +11,13 @@ with open("tokens/replenisher_token.txt") as f:
 def main():
 
     join_board(token)
-    delay = calculate_optimal_sleep()
+    delay = 0.1
 
     while True:
 
         reset_button = find_reset_button()
+        go_to(reset_button, delay, bot_name, token_str)
 
-        # go to reset button
         # monitor diamond concentration around collectors home
         # step on button when below threshold
         pass

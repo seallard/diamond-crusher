@@ -12,7 +12,7 @@ def main():
 
     join_board(token)
     base = get_player_base(bot_name)
-    delay = calculate_optimal_sleep()
+    delay = 0.1
 
     while True:
 
