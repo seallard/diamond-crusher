@@ -64,24 +64,23 @@ def get_player(player_name):
             return bot
 
 
-def closest_diamond(player_name):
+def n_closest_diamonds(player_name, n):
 
     diamonds = extract_objects("DiamondGameObject")
     player_position = get_player(player_name)['position']
 
-    shortest_distance = 100
-    closest_diamond = None
+    closest_diamonds = []
 
     for diamond in diamonds:
+
         diamond_position = diamond['position']
-
         distance = get_distance(diamond_position, player_position)
+        diamond['distance'] = distance
+        closest_diamonds.append(diamond)
 
-        if distance < shortest_distance:
-            shortest_distance = distance
-            closest_diamond = diamond
+    closest_diamonds.sort(key=lambda x: x['distance'], reverse=True)
 
-    return closest_diamond
+    return closest_diamonds[:n]
 
 
 def get_direction(xy_distance):
