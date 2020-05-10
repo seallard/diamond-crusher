@@ -2,6 +2,7 @@ import requests
 import json
 from time import sleep
 from time import perf_counter
+import random
 
 BOARD_ID = "4"
 
@@ -178,8 +179,21 @@ def go_towards(location, delay, player_name, token_str):
     direction = get_direction(xy_distance)
 
     print(f"Going: {direction}")
-    make_move(direction, token_str)
-    sleep(delay)
+    move_status = make_move(direction, token_str)
+
+    directions = ["NORTH", "SOUTH", "WEST", "EAST"]
+    directions.remove(direction)
+    handled_illegal_move = False
+
+    # Handle collisions and other illegal moves
+    while move_status == 403:
+        direction = random.choice(directions)
+        move_status = make_move(direction, token_str)
+        sleep(delay)
+        handled_illegal_move = True
+
+    if not handled_illegal_move:
+        sleep(delay)
 
 
 def go_to(position, delay, player_name, token_str):
