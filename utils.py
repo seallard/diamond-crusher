@@ -228,18 +228,16 @@ def find_reset_button():
     return reset_button['position']
 
 
-def average_distance_to_diamond_from_base(player_name):
+def average_distance_to_k_diamonds_from_base(player_name, k):
+    """
+    Get average distance of the k diamonds closest to
+    the collectors base.
+    """
 
-    diamonds = extract_objects("DiamondGameObject")
-    base = get_player_base(player_name)
-    total_distance = 0
+    diamonds = n_closest_diamonds(player_name, k)
+    total_distance = sum([diamond['distance'] for diamond in diamonds])
 
-    for diamond in diamonds:
-
-        position = diamond['position']
-        total_distance += get_distance(base, position)
-
-    return total_distance/len(diamonds)
+    return total_distance/k
 
 
 def valid_adjacent_position(position):
