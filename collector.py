@@ -23,7 +23,7 @@ def main():
             go_towards(diamond, delay, bot_name, token_str)
             collected_diamonds = number_of_collected_diamonds(bot_name)
 
-        go_towards(base, delay, bot_name, token_str)
+        go_to(base, delay, bot_name, token_str)
 
 
 if __name__ == "__main__":
