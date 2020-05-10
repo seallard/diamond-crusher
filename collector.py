@@ -4,13 +4,12 @@ from utils import *
 bot_name = "seal"
 
 with open("tokens/collector_token.txt") as f:
-    token_str = f.readlines()[0]
-    token = json.dumps({"botToken":token_str})
+    token_str = f.readlines()[0].rstrip()
 
 
 def main():
 
-    join_board(token)
+    join_board(token_str)
     base = get_player_base(bot_name)
     delay = 0.1
 

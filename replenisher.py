@@ -4,13 +4,12 @@ from utils import *
 bot_name = "jarvis"
 
 with open("tokens/replenisher_token.txt") as f:
-    token_str = f.readlines()[0]
-    token = json.dumps({"botToken":token_str})
+    token_str = f.readlines()[0].rstrip()
 
 
 def main():
 
-    join_board(token)
+    join_board(token_str)
     delay = 0.1
 
     while True:

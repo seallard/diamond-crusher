@@ -100,9 +100,10 @@ def get_direction(xy_distance):
         return "NORTH"
 
 
-def join_board(token):
+def join_board(token_str):
 
     join_url = api_base + f"/boards/{BOARD_ID}/join"
+    token = json.dumps({"botToken":token_str})
     r = requests.post(url=join_url, data=token, headers=header)
 
     return r.status_code
