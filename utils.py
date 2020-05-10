@@ -118,7 +118,7 @@ def get_game_objects():
     return board_state['data']['gameObjects']
 
 
-def make_move(direction, token_str):
+def make_move(direction, token_str, delay):
     """
     Move your piece in the specified direction.
     Assumes board has been joined previously.
@@ -130,6 +130,8 @@ def make_move(direction, token_str):
 
     if r.status_code != 200:
         print(f"Move failed: {r.status_code}")
+
+    sleep(delay)
 
     return r.status_code
 
@@ -170,6 +172,17 @@ def optimal_delay():
     return min_delay - owd
 
 
+def handle_illegal_move(direction, token_str, delay):
+
+    directions = ["NORTH", "SOUTH", "WEST", "EAST"]
+    directions.remove(direction)
+    new_direction = random.choice(directions)
+
+    move_status = make_move(new_direction, token_str, delay)
+
+    return move_status
+
+
 def go_towards(location, delay, player_name, token_str):
 
     player_location = get_player(player_name)['position']
@@ -179,21 +192,11 @@ def go_towards(location, delay, player_name, token_str):
     direction = get_direction(xy_distance)
 
     print(f"Going: {direction}")
-    move_status = make_move(direction, token_str)
-
-    directions = ["NORTH", "SOUTH", "WEST", "EAST"]
-    directions.remove(direction)
-    handled_illegal_move = False
+    move_status = make_move(direction, token_str, delay)
 
     # Handle collisions and other illegal moves
-    while move_status == 403:
-        direction = random.choice(directions)
-        move_status = make_move(direction, token_str)
-        sleep(delay)
-        handled_illegal_move = True
-
-    if not handled_illegal_move:
-        sleep(delay)
+    while move_status != 200:
+        move_status = handle_illegal_move(direction, token_str, delay)
 
 
 def go_to(position, delay, player_name, token_str):
