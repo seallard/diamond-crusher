@@ -11,7 +11,7 @@ def main():
 
     join_board(token_str)
     base = get_player_base(bot_name)
-    delay = 0.1
+    delay = optimal_delay()
 
     while True:
 

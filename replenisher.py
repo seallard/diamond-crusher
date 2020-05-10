@@ -10,7 +10,7 @@ with open("tokens/replenisher_token.txt") as f:
 def main():
 
     join_board(token_str)
-    delay = 0.1
+    delay = optimal_delay()
 
     while True:
 

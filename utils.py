@@ -133,12 +133,40 @@ def make_move(direction, token_str):
     return r.status_code
 
 
-def get_minimum_delay():
+def minimum_delay():
 
     data = requests.get(api_base + "/boards").json()['data'][0]
     delay_in_msec = data['minimumDelayBetweenMoves']
 
     return delay_in_msec/1000
+
+
+def one_way_delay():
+    """
+    Calculate upper bound for the one-way delay (owd) to the server.
+    The processing delay adds some overhead.
+    """
+
+    start_time = perf_counter()
+
+    for i in range(5):
+        requests.get(api_base)
+
+    stop_time = perf_counter()
+    owd = (stop_time - start_time)/10
+
+    return owd
+
+
+def optimal_delay():
+
+    owd = one_way_delay()
+    min_delay = minimum_delay()
+
+    if owd > min_delay:
+        return 0
+
+    return min_delay - owd
 
 
 def go_towards(location, delay, player_name, token_str):
