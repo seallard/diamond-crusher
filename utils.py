@@ -78,7 +78,7 @@ def n_closest_diamonds(player_name, n):
         diamond['distance'] = distance
         closest_diamonds.append(diamond)
 
-    closest_diamonds.sort(key=lambda x: x['distance'], reverse=True)
+    closest_diamonds.sort(key=lambda x: x['distance'])
 
     return closest_diamonds[:n]
 
