@@ -17,10 +17,15 @@ def main():
 
         collected_diamonds = 0
 
-        while collected_diamonds < 4:
+        while collected_diamonds < 5:
 
             diamond = closest_diamond(bot_name)
-            go_towards(diamond, delay, bot_name, token_str)
+            diamond_value = diamond['properties']['points']
+
+            if diamond_value + collected_diamonds > 5:
+                break
+
+            go_towards(diamond['position'], delay, bot_name, token_str)
             collected_diamonds = number_of_collected_diamonds(bot_name)
 
         go_to(base, delay, bot_name, token_str)
