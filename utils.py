@@ -4,7 +4,7 @@ from time import sleep
 from time import perf_counter
 import random
 
-BOARD_ID = "4"
+BOARD_ID = "3"
 
 api_base = "http://diamonds.etimo.se/api"
 header = {'Content-Type':'application/json', 'Accept':'application/json'}
@@ -81,7 +81,7 @@ def closest_diamond(player_name):
             shortest_distance = distance
             closest_diamond = diamond
 
-    return closest_diamond['position']
+    return closest_diamond
 
 
 def get_direction(xy_distance):
