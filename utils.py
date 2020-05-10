@@ -241,3 +241,24 @@ def average_distance_to_diamond_from_base(player_name):
         total_distance += get_distance(base, position)
 
     return total_distance/len(diamonds)
+
+
+def valid_adjacent_position(position):
+
+    # TODO: make sure position is free (no player base/teleporter)
+    if position['x'] < 14:
+        position['x'] += 1
+        return position
+
+    position['x'] -= 1
+    return position
+
+
+def go_next_to(position, delay, player_name, token_str):
+
+    adjacent = valid_adjacent_position(position)
+    go_to(adjacent, delay, player_name, token_str)
+
+
+def generate_email_addresses():
+    pass
