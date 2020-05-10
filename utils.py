@@ -210,3 +210,17 @@ def find_reset_button():
     reset_button = extract_objects("DiamondButtonGameObject")[0]
 
     return reset_button['position']
+
+
+def average_distance_to_diamond_from_base(player_name):
+
+    diamonds = extract_objects("DiamondGameObject")
+    base = get_player_base(player_name)
+    total_distance = 0
+
+    for diamond in diamonds:
+
+        position = diamond['position']
+        total_distance += get_distance(base, position)
+
+    return total_distance/len(diamonds)
