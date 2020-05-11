@@ -282,7 +282,7 @@ def generate_bot_names(n, base_name):
 def create_bot_army(n, base_email, base_name):
 
     emails = generate_email_addresses(n, base_email)
-    names = generate_bot_names(30, base_name)
+    names = generate_bot_names(n, base_name)
 
     bots = []
 
