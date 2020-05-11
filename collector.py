@@ -19,7 +19,7 @@ def main():
 
         while collected_diamonds < 5:
 
-            diamond = n_closest_diamonds(bot_name, 1)[0]
+            diamond = n_closest_diamonds(base, 1)[0]
             diamond_value = diamond['properties']['points']
 
             if diamond_value + collected_diamonds > 5:
