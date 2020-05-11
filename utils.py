@@ -4,7 +4,7 @@ from time import sleep
 from time import perf_counter
 import random
 
-BOARD_ID = "3"
+BOARD_ID = "2"
 
 api_base = "http://diamonds.etimo.se/api"
 header = {'Content-Type':'application/json', 'Accept':'application/json'}
