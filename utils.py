@@ -279,7 +279,7 @@ def generate_bot_names(n, base_name):
     return list(names)
 
 
-def create_bot_army(n, base_email, base_name):
+def create_bot_army(n, base_email, base_name, file_name):
 
     emails = generate_email_addresses(n, base_email)
     names = generate_bot_names(n, base_name)
@@ -291,13 +291,13 @@ def create_bot_army(n, base_email, base_name):
         token = register_bot(email, names[i])
         bots.append({'name':names[i], 'token':token})
 
-    with open("bot_army_tokens", 'w') as f:
+    with open(file_name, 'w') as f:
         json.dump(bots, f)
 
 
-def read_tokens():
+def read_tokens(file_name):
 
-    with open("bot_army_tokens") as f:
+    with open(file_name) as f:
         tokens = json.load(f)
 
     return tokens
