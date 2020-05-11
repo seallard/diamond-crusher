@@ -255,5 +255,25 @@ def go_next_to(position, delay, player_name, token_str):
     go_to(adjacent, delay, player_name, token_str)
 
 
-def generate_email_addresses():
-    pass
+def generate_email_addresses(n, base_email):
+
+    emails = []
+
+    for i in range(1, n+1):
+        emails.append("."*i + base_email)
+
+    return emails
+
+
+def generate_bot_names(n, base_name):
+    """
+    Generates n unique permutations of the base name.
+    n must be <= len(base_name)!
+    """
+
+    names = set()
+
+    while len(names) < n:
+        names.add("".join(random.sample(base_name,len(base_name))))
+
+    return names
