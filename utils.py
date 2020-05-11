@@ -276,4 +276,28 @@ def generate_bot_names(n, base_name):
     while len(names) < n:
         names.add("".join(random.sample(base_name,len(base_name))))
 
-    return names
+    return list(names)
+
+
+def create_bot_army(n, base_email, base_name):
+
+    emails = generate_email_addresses(n, base_email)
+    names = generate_bot_names(30, base_name)
+
+    bots = []
+
+    for i, email in enumerate(emails):
+
+        token = register_bot(email, names[i])
+        bots.append({'name':names[i], 'token':token})
+
+    with open("bot_army_tokens", 'w') as f:
+        json.dump(bots, f)
+
+
+def read_tokens():
+
+    with open("bot_army_tokens") as f:
+        tokens = json.load(f)
+
+    return tokens
