@@ -10,6 +10,45 @@ api_base = "http://diamonds.etimo.se/api"
 header = {'Content-Type':'application/json', 'Accept':'application/json'}
 
 
+def minimum_delay():
+
+    data = requests.get(api_base + "/boards").json()['data'][0]
+    delay_in_msec = data['minimumDelayBetweenMoves']
+
+    return delay_in_msec/1000
+
+
+def one_way_delay():
+    """
+    Calculate upper bound for the one-way delay (owd) to the server.
+    The processing delay adds some overhead.
+    """
+
+    start_time = perf_counter()
+
+    for i in range(5):
+        requests.get(api_base)
+
+    stop_time = perf_counter()
+    owd = (stop_time - start_time)/10
+
+    return owd
+
+
+def optimal_delay():
+
+    owd = one_way_delay()
+    min_delay = minimum_delay()
+
+    if owd > min_delay:
+        return 0
+
+    return min_delay - owd
+
+
+DELAY = optimal_delay()
+
+
 def register_bot(email, bot_name):
 
     register_url = "http://diamonds.etimo.se/api/bots"
@@ -119,7 +158,7 @@ def get_game_objects():
     return board_state['data']['gameObjects']
 
 
-def make_move(direction, token_str, delay):
+def make_move(direction, token_str):
     """
     Move your piece in the specified direction.
     Assumes board has been joined previously.
@@ -132,59 +171,23 @@ def make_move(direction, token_str, delay):
     if r.status_code != 200:
         print(f"Move failed: {r.status_code}")
 
-    sleep(delay)
+    sleep(DELAY)
 
     return r.status_code
 
 
-def minimum_delay():
-
-    data = requests.get(api_base + "/boards").json()['data'][0]
-    delay_in_msec = data['minimumDelayBetweenMoves']
-
-    return delay_in_msec/1000
-
-
-def one_way_delay():
-    """
-    Calculate upper bound for the one-way delay (owd) to the server.
-    The processing delay adds some overhead.
-    """
-
-    start_time = perf_counter()
-
-    for i in range(5):
-        requests.get(api_base)
-
-    stop_time = perf_counter()
-    owd = (stop_time - start_time)/10
-
-    return owd
-
-
-def optimal_delay():
-
-    owd = one_way_delay()
-    min_delay = minimum_delay()
-
-    if owd > min_delay:
-        return 0
-
-    return min_delay - owd
-
-
-def handle_illegal_move(direction, token_str, delay):
+def handle_illegal_move(direction, token_str):
 
     directions = ["NORTH", "SOUTH", "WEST", "EAST"]
     directions.remove(direction)
     new_direction = random.choice(directions)
 
-    move_status = make_move(new_direction, token_str, delay)
+    move_status = make_move(new_direction, token_str)
 
     return move_status
 
 
-def go_towards(location, delay, player_name, token_str):
+def go_towards(location, player_name, token_str):
 
     player_location = get_player(player_name)['position']
     xy_distance = get_xy_distance(player_location, location)
@@ -193,20 +196,20 @@ def go_towards(location, delay, player_name, token_str):
     direction = get_direction(xy_distance)
 
     print(f"Going: {direction}")
-    move_status = make_move(direction, token_str, delay)
+    move_status = make_move(direction, token_str)
 
     # Handle collisions and other illegal moves
     while move_status != 200:
-        move_status = handle_illegal_move(direction, token_str, delay)
+        move_status = handle_illegal_move(direction, token_str)
 
 
-def go_to(position, delay, player_name, token_str):
+def go_to(position, player_name, token_str):
 
     player_position = get_player(player_name)['position']
 
     while player_position != position:
 
-        go_towards(position, delay, player_name, token_str)
+        go_towards(position, player_name, token_str)
         player_position = get_player(player_name)['position']
 
 
@@ -253,10 +256,10 @@ def valid_adjacent_position(position):
     return position
 
 
-def go_next_to(position, delay, player_name, token_str):
+def go_next_to(position, player_name, token_str):
 
     adjacent = valid_adjacent_position(position)
-    go_to(adjacent, delay, player_name, token_str)
+    go_to(adjacent, player_name, token_str)
 
 
 
@@ -339,3 +342,27 @@ def closest_border():
     Find closest border and return its direction.
     """
     pass
+
+
+def spawn_and_place_gargoyle(token, name, position):
+
+    join_board(token)
+    go_to(position, name, token)
+
+
+def get_gargoyle_positions():
+
+    positions = []
+
+    for i in range(21):
+
+        if i < 15:
+            position = {'x':i, 'y':0}
+
+        else:
+            position = {'x':i%15, 'y':1}
+
+        positions.append(position)
+
+    return positions
+
