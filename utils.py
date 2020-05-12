@@ -21,6 +21,8 @@ def register_bot(email, bot_name):
 
     bot_data = json.dumps(bot_dict)
     r = requests.post(url=register_url, data=bot_data, headers=header)
+    print(r.status_code)
+    print(email)
     token = r.json()['data']['token']
 
     return token
@@ -255,14 +257,34 @@ def go_next_to(position, delay, player_name, token_str):
     go_to(adjacent, delay, player_name, token_str)
 
 
+
 def generate_email_addresses(n, base_email):
+    """
+    n must be smaller than 5! and the first part of the
+    gmail address must be longer than 6 chars.
+    """
 
-    emails = []
+    emails = set()
+    permute_part = base_email[:6]
 
-    for i in range(1, n+1):
-        emails.append("."*i + base_email)
+    while len(emails) < n:
+        number_of_periods = random.randrange(1, len(permute_part)-1)
+        indices = random.sample(range(1, len(permute_part)), number_of_periods)
+        indices.sort()
 
-    return emails
+        parts = []
+        previous_index = 0
+
+        for index in indices:
+            parts.append(base_email[previous_index:index] + ".")
+            previous_index = index
+
+        parts.append(base_email[previous_index:])
+        permutated_email = "".join(parts)
+
+        emails.add(permutated_email)
+
+    return list(emails)
 
 
 def generate_bot_names(n, base_name):
@@ -301,3 +323,17 @@ def read_tokens(file_name):
         tokens = json.load(f)
 
     return tokens
+
+
+def join_with_optimal_position(tokens_file_name):
+    """
+    Spawn collector in the center of the board.
+    """
+    pass
+
+
+def closest_border():
+    """
+    Find closest border and return its direction.
+    """
+    pass
