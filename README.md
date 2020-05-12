@@ -6,3 +6,4 @@ Maximize the average number of diamonds the collector returns to the base per st
 * Reset the board when average diamond distance from the collectors base is too high
 * Increase the concentration of diamonds by spawning bots that do nothing except occupy space
 * Make sure the collector spawns reasonably centered
+* Block other players by surrounding their bases
