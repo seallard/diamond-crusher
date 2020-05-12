@@ -21,8 +21,6 @@ def register_bot(email, bot_name):
 
     bot_data = json.dumps(bot_dict)
     r = requests.post(url=register_url, data=bot_data, headers=header)
-    print(r.status_code)
-    print(email)
     token = r.json()['data']['token']
 
     return token
