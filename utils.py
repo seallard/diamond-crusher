@@ -337,32 +337,7 @@ def join_with_optimal_position(tokens_file_name):
     pass
 
 
-def closest_border():
-    """
-    Find closest border and return its direction.
-    """
-    pass
-
-
-def spawn_and_place_gargoyle(token, name, position):
+def spawn_and_place_gargoyle(token):
 
     join_board(token)
-    go_to(position, name, token)
-
-
-def get_gargoyle_positions():
-
-    positions = []
-
-    for i in range(21):
-
-        if i < 15:
-            position = {'x':i, 'y':0}
-
-        else:
-            position = {'x':i%15, 'y':1}
-
-        positions.append(position)
-
-    return positions
-
+    make_move("NORTH", token)
