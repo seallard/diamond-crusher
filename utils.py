@@ -4,7 +4,7 @@ from time import sleep
 from time import perf_counter
 import random
 
-BOARD_ID = "2"
+BOARD_ID = "1"
 
 api_base = "http://diamonds.etimo.se/api"
 header = {'Content-Type':'application/json', 'Accept':'application/json'}
@@ -233,13 +233,12 @@ def find_reset_button():
     return reset_button['position']
 
 
-def average_distance_to_k_diamonds_from_base(base, k):
+def average_distance_to_k_diamonds_from_position(position, k):
     """
-    Get average distance of the k diamonds closest to
-    the collectors base.
+    Get average distance of the k diamonds closest to the position.
     """
 
-    diamonds = n_closest_diamonds(base, k)
+    diamonds = n_closest_diamonds(position, k)
     total_distance = sum([diamond['distance'] for diamond in diamonds])
 
     return total_distance/k
@@ -334,10 +333,36 @@ def join_with_optimal_position(tokens_file_name):
     """
     Spawn collector in the center of the board.
     """
+    bots = read_tokens("tokens/collector_tokens")
+
     pass
 
 
-def spawn_and_place_gargoyle(token):
+def closest_border(position):
+    """
+    Find closest border position and return location.
+    Board dimensions are hard coded.
+    """
+
+    width = 14
+    height = 14
+
+    x = position['x']
+    y = position['y']
+
+    # Distances to border in each direction
+    east = (width - x, {'x':width, 'y':y})
+    west = (x, {'x':0, 'y':y})
+    north = (y, {'x':x, 'y':0})
+    south = (height-y, {'x':x, 'y':14})
+
+    distances = [east, west, north, south]
+    closest_location = min(distances, key = lambda t: t[0])
+
+    return closest_location(1)
+
+
+def spawn_and_place_gargoyle(token, name):
 
     join_board(token)
     make_move("NORTH", token)
