@@ -21,9 +21,13 @@ def register_bot(email, bot_name):
 
     bot_data = json.dumps(bot_dict)
     r = requests.post(url=register_url, data=bot_data, headers=header)
-    token = r.json()['data']['token']
 
-    return token
+    if r.status_code == 200:
+
+        token = r.json()['data']['token']
+        return token
+
+    return "invalid"
 
 
 def get_distance(location_a, location_b):
