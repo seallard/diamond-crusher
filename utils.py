@@ -85,9 +85,8 @@ def get_xy_distance(location_a, location_b):
     return (delta_x, delta_y)
 
 
-def extract_objects(object_type):
+def extract_objects(object_type, game_objects):
 
-    game_objects = get_game_objects()
     extracted_objects = []
 
     for game_object in game_objects:
@@ -97,9 +96,9 @@ def extract_objects(object_type):
     return extracted_objects
 
 
-def get_player(player_name):
+def get_player(player_name, objects):
 
-    bots = extract_objects("BotGameObject")
+    bots = extract_objects("BotGameObject", objects)
 
     for bot in bots:
         if bot['properties']['name'] == player_name:
@@ -107,9 +106,9 @@ def get_player(player_name):
             return bot
 
 
-def n_closest_diamonds(position, n):
+def n_closest_diamonds(position, n, objects):
 
-    diamonds = extract_objects("DiamondGameObject")
+    diamonds = extract_objects("DiamondGameObject", objects)
     closest_diamonds = []
 
     for diamond in diamonds:
@@ -146,11 +145,17 @@ def join_board(token_str):
     join_url = api_base + f"/boards/{BOARD_ID}/join"
     token = json.dumps({"botToken":token_str})
     r = requests.post(url=join_url, data=token, headers=header)
+    game_objects = get_game_objects(r.json())
 
-    return r.status_code
+    return game_objects
 
 
-def get_game_objects():
+def get_game_objects(board_state):
+
+    return board_state['data']['gameObjects']
+
+
+def refresh_game_objects():
 
     board_url = api_base + f"/boards/{BOARD_ID}"
     board_state = requests.get(board_url, header).json()
@@ -173,72 +178,78 @@ def make_move(direction, token_str):
 
     sleep(DELAY)
 
-    return r.status_code
+    return r
 
 
 def handle_illegal_move(direction, token_str):
 
     directions = ["NORTH", "SOUTH", "WEST", "EAST"]
     directions.remove(direction)
+
     new_direction = random.choice(directions)
+    move = make_move(new_direction, token_str)
 
-    move_status = make_move(new_direction, token_str)
-
-    return move_status
+    return move
 
 
-def go_towards(location, player_name, token_str):
+def go_towards(location, player_name, token_str, objects):
 
-    player_location = get_player(player_name)['position']
+    player_location = get_player(player_name, objects)['position']
     xy_distance = get_xy_distance(player_location, location)
 
     print(f"Distance: {xy_distance}")
     direction = get_direction(xy_distance)
 
     print(f"Going: {direction}")
-    move_status = make_move(direction, token_str)
+    move = make_move(direction, token_str)
 
     # Handle collisions and other illegal moves
-    while move_status != 200:
-        move_status = handle_illegal_move(direction, token_str)
+    while move.status_code != 200:
+        move = handle_illegal_move(direction, token_str)
+
+    game_objects = get_game_objects(move.json())
+
+    return game_objects
 
 
-def go_to(position, player_name, token_str):
+def go_to(position, player_name, token_str, objects):
 
-    player_position = get_player(player_name)['position']
+    player_position = get_player(player_name, objects)['position']
 
     while player_position != position:
 
-        go_towards(position, player_name, token_str)
-        player_position = get_player(player_name)['position']
+        objects = go_towards(position, player_name, token_str, objects)
+        player_position = get_player(player_name, objects)['position']
+
+    return objects
 
 
-def number_of_collected_diamonds(player_name):
+def number_of_collected_diamonds(player_name, objects):
 
-    return get_player(player_name)['properties']['diamonds']
+    return get_player(player_name, objects)['properties']['diamonds']
 
 
-def get_player_base(name):
+def get_player_base(name, objects):
 
-    player = get_player(name)
+    player = get_player(name, objects)
     base = player['properties']['base']
 
     return base
 
 
-def find_reset_button():
+def find_reset_button(objects):
 
-    reset_button = extract_objects("DiamondButtonGameObject")[0]
+    reset_button = extract_objects("DiamondButtonGameObject", objects)[0]
 
     return reset_button['position']
 
 
-def average_distance_to_k_diamonds_from_position(position, k):
+def average_distance_to_k_diamonds_from_position(position, k, objects):
     """
     Get average distance of the k diamonds closest to the position.
     """
 
-    diamonds = n_closest_diamonds(position, k)
+    diamonds = n_closest_diamonds(position, k, objects)
     total_distance = sum([diamond['distance'] for diamond in diamonds])
 
     return total_distance/k
@@ -255,10 +266,13 @@ def valid_adjacent_position(position):
     return position
 
 
-def go_next_to(position, player_name, token_str):
+def go_next_to(position, player_name, token_str, objects):
 
     adjacent = valid_adjacent_position(position)
-    go_to(adjacent, player_name, token_str)
+    game_objects = go_to(adjacent, player_name, token_str, objects)
+
+    return game_objects
+
 
 
 
