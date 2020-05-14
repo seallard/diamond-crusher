@@ -51,7 +51,7 @@ DELAY = optimal_delay()
 
 def register_bot(email, bot_name):
 
-    register_url = "http://diamonds.etimo.se/api/bots"
+    register_url = api_base + "/bots"
 
     bot_dict = {
     "email": email,
@@ -145,6 +145,9 @@ def join_board(token_str):
     join_url = api_base + f"/boards/{BOARD_ID}/join"
     token = json.dumps({"botToken":token_str})
     r = requests.post(url=join_url, data=token, headers=header)
+
+    if r.status_code != 200:
+        print(r.text)
 
 
 def get_game_objects(board_state):
@@ -353,9 +356,20 @@ def join_with_optimal_position(tokens_file_name):
     """
     Spawn collector in the center of the board.
     """
-    bots = read_tokens("tokens/collector_tokens")
+    bots = read_tokens(tokens_file_name)
 
-    pass
+    for bot in bots:
+
+        name = bot['name']
+        token_str = bot['token']
+
+        join_board(token_str)
+        objects = refresh_game_objects()
+        base = get_player_base(name, objects)
+
+        if good_start(base):
+            print("Joined in good position")
+            return (name, token_str)
 
 
 def closest_border(position):
@@ -444,3 +458,14 @@ def best_diamond(bot, objects):
         return closest_to_player
 
     return closest_to_base
+
+
+def good_start(position):
+
+    x = position['x']
+    y = position['y']
+
+    if x > 5 and x < 10 and y > 5 and y < 10:
+        return True
+
+    return False

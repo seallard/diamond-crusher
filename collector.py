@@ -1,11 +1,11 @@
 from utils import *
 
-bot = "seal"
-token_str = "151bd1b1-81fb-414b-aebc-055a42750bad"
+
+bot, token = join_with_optimal_position("tokens/test_tokens")
 
 def main():
 
-    join_board(token_str)
+    join_board(token)
     objects = refresh_game_objects()
     base = get_player_base(bot, objects)
 
@@ -14,9 +14,9 @@ def main():
         while worth_hunting(bot):
 
             diamond = best_diamond(bot, objects)
-            objects = go_to(diamond, bot, token_str, objects)
+            objects = go_to(diamond, bot, token, objects)
 
-        objects = go_to(base, bot, token_str, objects)
+        objects = go_to(base, bot, token, objects)
 
 
 if __name__ == "__main__":
