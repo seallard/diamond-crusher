@@ -389,4 +389,25 @@ def spawn_and_place_gargoyle(token, name):
 
 
 def worth_hunting(bot):
-    return False
+
+    objects = refresh_game_objects()
+    collected_diamonds = number_of_collected_diamonds(bot, objects)
+
+    if collected_diamonds == 5:
+        print("Max capacity reached")
+        return False
+
+    base = get_player_base(bot, objects)
+    closest_diamond = n_closest_diamonds(base, 1, objects)[0]
+
+    if collected_diamonds + closest_diamond['properties']['points'] > 5:
+        print("Capacity overload")
+        return False
+
+    distance_to_closest_diamond = average_distance_to_k_diamonds_from_position(base, 1, objects)
+
+    if distance_to_closest_diamond > 8:
+        print("Diamond too far away")
+        return False
+
+    return True
