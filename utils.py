@@ -364,6 +364,7 @@ def join_with_optimal_position(tokens_file_name):
         token_str = bot['token']
 
         join_board(token_str)
+        make_move("NORTH", token_str)
         objects = refresh_game_objects()
         base = get_player_base(name, objects)
 
