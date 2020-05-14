@@ -13,8 +13,8 @@ def main():
 
         while worth_hunting(bot):
 
-            diamond = n_closest_diamonds(base, 1, objects)[0]['position']
-            objects = go_towards(diamond, bot, token_str)
+            diamond = best_diamond(bot, objects)
+            objects = go_to(diamond, bot, token_str, objects)
 
         objects = go_to(base, bot, token_str, objects)
 

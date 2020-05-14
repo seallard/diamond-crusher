@@ -406,8 +406,41 @@ def worth_hunting(bot):
 
     distance_to_closest_diamond = average_distance_to_k_diamonds_from_position(base, 1, objects)
 
-    if distance_to_closest_diamond > 8:
+    if distance_to_closest_diamond > 4:
         print("Diamond too far away")
         return False
 
     return True
+
+
+def single_closest_diamond(position, objects):
+
+    location = n_closest_diamonds(position, 1, objects)[0]['position']
+    return location
+
+
+def collection_distance(diamond_position, base_position, player_position):
+
+    to_diamond = get_distance(diamond_position, player_position)
+    back_to_base = get_distance(diamond_position, base_position)
+    total_distance = to_diamond + back_to_base
+
+    return total_distance
+
+
+def best_diamond(bot, objects):
+
+    player = get_player(bot, objects)
+    player_position = player['position']
+    base = get_player_base(bot, objects)
+
+    closest_to_player = single_closest_diamond(player_position, objects)
+    closest_to_base = single_closest_diamond(base, objects)
+
+    ctp_distance = collection_distance(closest_to_player, base, player_position)
+    ctb_distance = collection_distance(closest_to_base, base, player_position)
+
+    if ctp_distance < ctb_distance:
+        return closest_to_player
+
+    return closest_to_base
