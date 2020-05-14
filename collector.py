@@ -1,7 +1,9 @@
 from utils import *
-
+import threading
 
 bot, token = join_with_optimal_position("tokens/test_tokens")
+t = threading.Thread(target = spawn_replenisher, args=(bot,))
+t.start()
 
 def main():
 
