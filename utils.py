@@ -6,7 +6,7 @@ import random
 
 BOARD_ID = "1"
 
-api_base = "http://localhost:8081/api"
+api_base = "http://diamonds.etimo.se/api"
 header = {'Content-Type':'application/json', 'Accept':'application/json'}
 
 
