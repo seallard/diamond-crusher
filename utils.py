@@ -6,7 +6,7 @@ import random
 
 BOARD_ID = "1"
 
-api_base = "http://diamonds.etimo.se/api"
+api_base = "http://localhost:8081/api"
 header = {'Content-Type':'application/json', 'Accept':'application/json'}
 
 
@@ -145,9 +145,6 @@ def join_board(token_str):
     join_url = api_base + f"/boards/{BOARD_ID}/join"
     token = json.dumps({"botToken":token_str})
     r = requests.post(url=join_url, data=token, headers=header)
-    game_objects = get_game_objects(r.json())
-
-    return game_objects
 
 
 def get_game_objects(board_state):
@@ -192,8 +189,9 @@ def handle_illegal_move(direction, token_str):
     return move
 
 
-def go_towards(location, player_name, token_str, objects):
+def go_towards(location, player_name, token_str):
 
+    objects = refresh_game_objects()
     player_location = get_player(player_name, objects)['position']
     xy_distance = get_xy_distance(player_location, location)
 
@@ -218,7 +216,7 @@ def go_to(position, player_name, token_str, objects):
 
     while player_position != position:
 
-        objects = go_towards(position, player_name, token_str, objects)
+        objects = go_towards(position, player_name, token_str)
         player_position = get_player(player_name, objects)['position']
 
     return objects
@@ -257,23 +255,31 @@ def average_distance_to_k_diamonds_from_position(position, k, objects):
 
 def valid_adjacent_position(position):
 
-    # TODO: make sure position is free (no player base/teleporter)
     if position['x'] < 14:
-        position['x'] += 1
-        return position
+        return {'x':position['x']+1, 'y':position['y']}
 
-    position['x'] -= 1
-    return position
+    return {'x':position['x']-1, 'y':position['y']}
+
+
+def already_next_to(position, player_position):
+
+    if get_distance(position, player_position) < 2:
+        return True
+
+    return False
 
 
 def go_next_to(position, player_name, token_str, objects):
 
+    player_position = get_player(player_name, objects)['position']
+
+    if already_next_to(position, player_position):
+        return objects
+
     adjacent = valid_adjacent_position(position)
-    game_objects = go_to(adjacent, player_name, token_str, objects)
+    objects = go_to(adjacent, player_name, token_str, objects)
 
-    return game_objects
-
-
+    return objects
 
 
 def generate_email_addresses(n, base_email):
@@ -380,3 +386,7 @@ def spawn_and_place_gargoyle(token, name):
 
     join_board(token)
     make_move("NORTH", token)
+
+
+def worth_hunting(bot):
+    return False
